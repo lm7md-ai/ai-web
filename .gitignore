@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+
+# Node
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# App runtime data (generated, not source)
+var/
+!var/.gitkeep
+
+# Archives & local secrets
+*.zip
+.env
+*.db
+*.db-wal
+*.db-shm
+.DS_Store
