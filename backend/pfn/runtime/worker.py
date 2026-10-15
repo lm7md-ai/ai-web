@@ -33,10 +33,31 @@ if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
 
 from pfn.runtime.serde import jsonable  # noqa: E402
+from pfn.worlds.sim.city_sim import MissionStopped  # noqa: E402
+from pfn.worlds.sim.neural_sim import SimulationStopped  # noqa: E402
+from pfn.worlds.sim.robot_sim import (  # noqa: E402
+    CrashError,
+    OutOfEnergyError,
+    StepLimitError,
+)
 
 
 class JobError(Exception):
     pass
+
+
+# Raised by the simulation modules when a run ends through the world's own
+# rules rather than through a bug in the learner's code.  They are matched by
+# *name*: the sandbox imports its own copy of the world module, so the classes
+# it raises are not identical to the ones imported here.
+WORLD_STOP_EXCEPTIONS = (
+    CrashError,
+    OutOfEnergyError,
+    StepLimitError,
+    MissionStopped,
+    SimulationStopped,
+)
+WORLD_STOP_NAMES = frozenset(cls.__name__ for cls in WORLD_STOP_EXCEPTIONS)
 
 
 class _CappedWriter:
@@ -225,8 +246,20 @@ def main() -> int:  # noqa: C901 - a single controlled entry point
                                     f"define a function named '{job.get('target', 'program')}' "
                                     "that accepts the world API object"
                                 )
-                            func(api)
+                            stop = None
+                            try:
+                                func(api)
+                            except BaseException as exc:  # noqa: BLE001
+                                if type(exc).__name__ not in WORLD_STOP_NAMES:
+                                    raise
+                                # A simulation stop (tick limit, crash, empty
+                                # battery) is an outcome, not a crash: the
+                                # world is still evaluated so the learner gets
+                                # a score and a clear reason.
+                                stop = {"type": type(exc).__name__, "message": str(exc)}
                             result["world"] = world_module.result(api, state)
+                            if stop is not None:
+                                result["world"]["stop_signal"] = stop
                         else:
                             raise JobError(f"unknown job kind: {kind}")
                         result["ok"] = True
