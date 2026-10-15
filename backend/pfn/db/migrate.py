@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import re
+import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -24,6 +25,28 @@ def _ensure_meta(db: Database) -> None:
             applied_at  TEXT NOT NULL
         )"""
     )
+
+
+def split_statements(sql: str) -> list[str]:
+    """Split a migration script into executable statements.
+
+    ``Connection.executescript`` implicitly commits whatever transaction is
+    open, which would break the atomic wrapper in :meth:`Database.transaction`.
+    Splitting on complete statements keeps every migration atomic.
+    """
+    statements: list[str] = []
+    buffer = ""
+    for line in sql.splitlines(keepends=True):
+        stripped = line.strip()
+        if not buffer.strip() and (not stripped or stripped.startswith("--")):
+            continue
+        buffer += line
+        if sqlite3.complete_statement(buffer):
+            statements.append(buffer.strip())
+            buffer = ""
+    if buffer.strip():
+        statements.append(buffer.strip())
+    return statements
 
 
 def discover() -> list[tuple[str, Path]]:
@@ -53,7 +76,8 @@ def migrate(db: Database) -> list[str]:
                 )
             continue
         with db.transaction() as conn:
-            conn.executescript(sql)
+            for statement in split_statements(sql):
+                conn.execute(statement)
             conn.execute(
                 "INSERT INTO schema_migrations (version, checksum, applied_at) VALUES (?, ?, ?)",
                 (version, checksum, _utcnow()),
