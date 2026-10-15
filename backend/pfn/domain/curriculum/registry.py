@@ -52,6 +52,21 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
+def _junit_file(classname: str, name: str = "") -> str:
+    """Resolve the test file that owns a JUnit case.
+
+    pytest writes ``classname="tests.test_public"`` for executed cases, but
+    leaves it empty for collection errors, where the module path lands in
+    ``name`` instead. Both shapes are handled so a public failure is never
+    mislabelled as hidden.
+    """
+    parts = [part for part in (classname or name or "").split(".") if part]
+    if not parts:
+        return ""
+    stem = parts[1] if len(parts) > 1 and parts[0] == "tests" else parts[-1]
+    return f"{stem}.py"
+
+
 def validate_curriculum() -> list[str]:
     """Structural checks used by the test suite (skills exist, ids unique...)."""
     problems: list[str] = []
@@ -201,14 +216,19 @@ class CurriculumService:
 
         passed, total = report["passed"], report["total"]
         ok = report["ok"]
-        # visible cases are safe to show; hidden failures are summarised only
-        visible = {name for name in spec.public_tests}
+        # Visible cases are safe to show; hidden failures are summarised only.
+        # JUnit reports the module as ``tests.<file_stem>``, so the file that
+        # owns a case is derived from the classname, never from the case name.
+        public_files = {name for name in spec.public_tests}
         cases: list[dict] = []
+        failed_public: list[str] = []
+        failed_hidden: list[str] = []
         for case in report["cases"]:
-            file_name = case["classname"].split(".")[0] + ".py" if case["classname"] else ""
-            is_public = any(name.startswith("test_public") for name in [file_name])
+            file_name = _junit_file(case["classname"], case["name"])
+            is_public = file_name in public_files
             cases.append(
                 {
+                    "file": file_name,
                     "name": case["name"],
                     "outcome": case["outcome"],
                     "message": case["message"] if is_public else "",
@@ -216,9 +236,10 @@ class CurriculumService:
                     "visible": is_public,
                 }
             )
-        failed_hidden = [
-            c["name"] for c in report["cases"] if c["outcome"] in ("failed", "error") and not c["name"].startswith("test_public")
-        ]
+            if case["outcome"] in ("failed", "error"):
+                (failed_public if is_public else failed_hidden).append(
+                    case["name"] if is_public else file_name
+                )
 
         field_map = {"task": "task_passed", "assessment": "assessment_passed", "transfer_task": "transfer_passed"}
         self._bump(learner_id, module_id, **{field_map[spec_name]: 1 if ok else 0})
@@ -255,10 +276,11 @@ class CurriculumService:
             "output": report["output"] if not ok else "",
             "timed_out": report["timed_out"],
             "duration_ms": duration_ms,
-            "feedback": self._feedback(ok, passed, total, failed_hidden, duration_ms),
+            "feedback": self._feedback(ok, passed, total, failed_hidden, duration_ms, failed_public),
         }
 
-    def _feedback(self, ok: bool, passed: int, total: int, failed_hidden: list[str], duration_ms: int) -> dict:
+    def _feedback(self, ok: bool, passed: int, total: int, failed_hidden: list[str], duration_ms: int,
+                  failed_public: list[str] | None = None) -> dict:
         if ok:
             return {
                 "notes_en": [f"All {total} checks passed in {duration_ms} ms."],
@@ -266,6 +288,9 @@ class CurriculumService:
             }
         notes_en = [f"{passed}/{total} checks passed."]
         notes_ar = [f"نجح {passed} من {total} فحصاً."]
+        for name in (failed_public or [])[:5]:
+            notes_en.append(f"Visible check failed: {name} - read the case output for the exact difference.")
+            notes_ar.append(f"فحص ظاهر فاشل: {name} - راجع مخرجات الفحص لمعرفة الفرق بالضبط.")
         for name in failed_hidden[:5]:
             notes_en.append(f"Hidden check failed: {name}")
             notes_ar.append(f"فحص مخفي فاشل: {name}")
