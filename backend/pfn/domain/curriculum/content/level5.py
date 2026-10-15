@@ -46,7 +46,7 @@ unlike a Python list, which stores pointers to scattered objects. That means:
 while `values[values > 0] = 0` writes in place.
 
 Careful: `arr[1:3]` is a **view** onto the same memory, not a copy - mutating it changes the parent.""",
-        skills=("ds.numpy", "ds.vectorization", "ds.numerical"),
+        skills=("data.numpy", "data.numpy_advanced", "sci.linalg"),
         prerequisites=("l1.lists_tuples", "l4.data_model"),
         example_code="""import time
 
@@ -390,7 +390,7 @@ def winsorize(values):
 
 Watch for classic mistakes: mutating a frame while iterating over it, and reaching for
 `apply` where a vectorised operation would do (much slower).""",
-        skills=("ds.pandas", "ds.groupby", "ds.joins"),
+        skills=("data.pandas", "data.joins"),
         prerequisites=("l5.numpy_foundations",),
         example_code="""import pandas as pd
 
@@ -723,7 +723,7 @@ def monthly_trend(frame, date_column="signed_up"):
    important row in the table.
 6. **Text**: strip whitespace and normalise case before comparing.
 7. **Log every step**: a good cleaning function returns a report of what it changed.""",
-        skills=("ds.cleaning", "ds.pandas", "ds.typing"),
+        skills=("data.cleaning", "data.pandas", "pro.typing"),
         prerequisites=("l5.pandas_core",),
         example_code="""import pandas as pd
 
@@ -1085,7 +1085,7 @@ Rules:
 - keep the raw data: a transformation must be re-runnable;
 - log metrics after every run (rows in/out, rows rejected);
 - test `transform` above all: it is where the logic lives and the easiest to test.""",
-        skills=("ds.etl", "ds.pandas", "pro.structure"),
+        skills=("data.pipelines", "data.pandas", "pro.refactoring"),
         prerequisites=("l5.data_cleaning",),
         example_code="""import pandas as pd
 

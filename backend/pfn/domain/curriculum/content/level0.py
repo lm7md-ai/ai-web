@@ -47,7 +47,7 @@ Note the difference between:
 
 Check identity with `a is b` and equality with `a == b`.""",
         skills=("core.mutability", "core.aliasing", "recovery.lists"),
-        prerequisites=("recovery.syntax",),
+        prerequisites=(),
         example_code="""a = [1, 2, 3]
 b = a              # same object, two names
 c = list(a)        # a real (shallow) copy
@@ -275,7 +275,7 @@ The standard fix for the mutable default is:
 Before fixing anything, write a test that reproduces the bug - that is what stops
 it from coming back.""",
         skills=("core.functions", "recovery.debugging", "core.exceptions_basic"),
-        prerequisites=("recovery.syntax",),
+        prerequisites=(),
         example_code="""# Broken: the default list is shared by every call.
 def broken_log(message, entries=[]):
     entries.append(message)
@@ -491,7 +491,7 @@ Be careful not to confuse a missing field with a zero value: `row.get("qty")`
 returns `None` when the key is absent and `0` when the value is zero. Use
 `row.get("qty", 0)` when you need a numeric default.""",
         skills=("ds.dicts", "core.loops", "stdlib.collections"),
-        prerequisites=("recovery.lists",),
+        prerequisites=(),
         example_code="""from collections import defaultdict
 
 orders = [
@@ -713,7 +713,7 @@ Import rules worth remembering:
 
 An `__init__.py` file (even an empty one) turns a folder into an importable package.""",
         skills=("core.modules", "core.packages", "career.code_reading"),
-        prerequisites=("recovery.functions",),
+        prerequisites=(),
         example_code="""# --- project layout used in the task -------------------------------
 # main.py        -> entry point, wires everything together
 # pricing.py     -> pure calculation, no printing

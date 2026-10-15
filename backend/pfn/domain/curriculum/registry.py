@@ -14,12 +14,36 @@ from datetime import datetime, timezone
 
 from pfn.db.connection import Database
 from pfn.domain.curriculum.content.level0 import MODULES as LEVEL0
+from pfn.domain.curriculum.content.level1 import MODULES as LEVEL1
+from pfn.domain.curriculum.content.level2 import MODULES as LEVEL2
+from pfn.domain.curriculum.content.level3 import MODULES as LEVEL3
+from pfn.domain.curriculum.content.level4 import MODULES as LEVEL4
+from pfn.domain.curriculum.content.level5 import MODULES as LEVEL5
+from pfn.domain.curriculum.content.level6 import MODULES as LEVEL6
+from pfn.domain.curriculum.content.level7 import MODULES as LEVEL7
+from pfn.domain.curriculum.content.level8 import MODULES as LEVEL8
+from pfn.domain.curriculum.content.level9 import MODULES as LEVEL9
+from pfn.domain.curriculum.content.level10 import MODULES as LEVEL10
+from pfn.domain.curriculum.content.level11 import MODULES as LEVEL11
 from pfn.domain.curriculum.models import CurriculumModule, TaskSpec
 from pfn.domain.skills.graph import SkillGraphService
 from pfn.runtime.policy import PRESETS
 from pfn.runtime.service import ExecutionService, RunRequest
 
-MODULES: list[CurriculumModule] = list(LEVEL0)
+MODULES: list[CurriculumModule] = (
+    list(LEVEL0)
+    + list(LEVEL1)
+    + list(LEVEL2)
+    + list(LEVEL3)
+    + list(LEVEL4)
+    + list(LEVEL5)
+    + list(LEVEL6)
+    + list(LEVEL7)
+    + list(LEVEL8)
+    + list(LEVEL9)
+    + list(LEVEL10)
+    + list(LEVEL11)
+)
 
 _BY_ID: dict[str, CurriculumModule] = {module.id: module for module in MODULES}
 

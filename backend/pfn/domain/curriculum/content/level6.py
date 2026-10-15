@@ -56,7 +56,7 @@ Practical rules:
 
 The ratio method: double the input. If the time roughly doubles -> `O(n)`. If it quadruples ->
 `O(n^2)`. If it grows by a constant amount -> `O(log n)`.""",
-        skills=("alg.complexity", "alg.benchmarking", "alg.data_structures"),
+        skills=("algo.complexity", "algo.benchmarking", "ds.lists"),
         prerequisites=("l1.lists_tuples", "l1.dicts_sets"),
         example_code="""import random
 import time
@@ -378,7 +378,7 @@ requires **sorted** data and fails silently when the data is not sorted.
 In production: use `sorted()` / `list.sort()` (TimSort: `O(n log n)`, stable, very fast on
 partially sorted data) and `bisect` for binary search. Write the algorithms here to
 understand them, then use the built-ins at work.""",
-        skills=("alg.sorting", "alg.binary_search", "alg.recursion"),
+        skills=("algo.sorting", "algo.searching", "algo.recursion"),
         prerequisites=("l6.complexity",),
         example_code="""import random
 
@@ -749,7 +749,7 @@ Traversals:
 
 For balance in production use a self-balancing tree (AVL/Red-Black), or simply rely on
 `dict`/`set` when you do not need ordering.""",
-        skills=("alg.stacks", "alg.queues", "alg.trees"),
+        skills=("ds.stacks_queues", "ds.trees"),
         prerequisites=("l6.sorting_searching",),
         example_code="""from collections import deque
 
@@ -1229,7 +1229,7 @@ Extensions:
 - **Union-Find** for connected components.
 
 Beware infinite loops: always keep a `seen` set.""",
-        skills=("alg.graphs", "alg.bfs_dfs", "alg.shortest_path"),
+        skills=("ds.graphs", "algo.bfs", "algo.shortest_paths"),
         prerequisites=("l6.stacks_queues_trees",),
         example_code="""from collections import deque
 
@@ -1676,7 +1676,7 @@ distance.
 
 Careful: deep recursion hits Python's 1000-call limit - use a table or raise
 `sys.setrecursionlimit` with care.""",
-        skills=("alg.dp", "alg.recursion", "alg.memoization"),
+        skills=("algo.dp", "algo.recursion"),
         prerequisites=("l6.graphs",),
         example_code="""import time
 from functools import lru_cache

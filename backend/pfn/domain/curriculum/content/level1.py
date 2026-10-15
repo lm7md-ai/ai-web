@@ -42,7 +42,7 @@ Points that matter:
 
 For formatting, prefer f-strings: `f"{name} has {count} items"`.""",
         skills=("core.variables", "core.operators", "core.strings"),
-        prerequisites=("recovery.syntax",),
+        prerequisites=(),
         example_code="""name = "Aisha"
 age = 21
 height = 1.68

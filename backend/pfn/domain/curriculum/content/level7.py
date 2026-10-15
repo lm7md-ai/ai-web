@@ -43,7 +43,7 @@ MODULES: list[CurriculumModule] = [
 
 Golden rule: always compare training performance with test performance. A wide gap is
 overfitting.""",
-        skills=("ml.supervised", "ml.regression", "ml.evaluation"),
+        skills=("ml.workflow", "ml.regression", "ml.evaluation"),
         prerequisites=("l5.numpy_foundations", "l6.complexity"),
         example_code="""import numpy as np
 
@@ -437,7 +437,7 @@ Two algorithms to start with:
   Simple, but slow at prediction time and needs scaled features.
 - **Logistic regression**: `sigmoid(Xw) = 1/(1+e^{-z})`, trained by minimising binary
   cross-entropy. Fast, and it produces interpretable probabilities.""",
-        skills=("ml.classification", "ml.metrics", "ml.logistic"),
+        skills=("ml.classification", "ml.evaluation"),
         prerequisites=("l7.ml_fundamentals",),
         example_code="""import numpy as np
 from sklearn.datasets import make_classification
@@ -796,7 +796,7 @@ training-set size.
 - curves close together but high -> **underfitting**: raise model complexity.
 - a wide gap between them -> **overfitting**: add data or strengthen regularisation.
 - the gap shrinking with more data -> more data will help.""",
-        skills=("ml.cross_validation", "ml.model_selection", "ml.evaluation"),
+        skills=("ml.model_selection", "ml.evaluation"),
         prerequisites=("l7.classification",),
         example_code="""import numpy as np
 from sklearn.datasets import make_regression

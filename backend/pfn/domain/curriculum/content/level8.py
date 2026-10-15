@@ -57,7 +57,7 @@ Use small random values, or `He`/`Glorot` depending on the activation.
 Losses:
 - `MSE` for regression,
 - cross-entropy for classification.""",
-        skills=("dl.neural_networks", "dl.activations", "dl.forward_pass"),
+        skills=("dl.nn", "dl.tensors"),
         prerequisites=("l7.classification",),
         example_code="""import numpy as np
 
@@ -468,7 +468,7 @@ large, there is a bug somewhere - usually in the activation derivative or in the
 
 Checking is expensive (two evaluations per parameter), so run it on a small network and a few
 samples before the long training run.""",
-        skills=("dl.backprop", "dl.gradient_checking", "dl.mlp"),
+        skills=("dl.autograd", "dl.nn"),
         prerequisites=("l8.neural_from_scratch",),
         example_code="""import numpy as np
 
@@ -929,7 +929,7 @@ To fight overfitting:
   and cheapest defence.
 
 Keep the best weights you saw on validation, not the last ones.""",
-        skills=("dl.optimizers", "dl.regularization", "dl.training"),
+        skills=("dl.training",),
         prerequisites=("l8.backprop_mlp",),
         example_code="""import numpy as np
 
